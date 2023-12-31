@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stopwatch ⏱️</title>
+  <style>
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      background: linear-gradient(to right bottom, #e84393, #764ba2);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      overflow: hidden;
+    }
+
+    #stopwatch-container {
+      text-align: center;
+      position: relative;
+      background: rgba(255, 255, 255, 0.2);
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      margin: 50px; /* Updated margin for all sides */
+    }
+
+    #timer {
+      font-size: 48px;
+      font-weight: bold;
+      color: #ecf0f1;
+      margin-bottom: 10px;
+    }
+
+    #lap-times {
+      font-size: 18px;
+      margin-bottom: 20px;
+      color: #ecf0f1;
+    }
+
+    #controls {
+      margin-top: 20px;
+      display: flex;
+      justify-content: space-around;
+    }
+
+    button {
+      font-size: 18px;
+      padding: 10px 20px;
+      background-color: #3498db;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      margin: 10px; /* Updated margin for all buttons */
+    }
+
+    button:hover {
+      background-color: #2980b9;
+    }
+
+    #glass-circle1,
+    #glass-circle2 {
+      position: absolute;
+      background-color:#e292fc;
+      border-radius: 80%;
+    }
+
+    #glass-circle1 {
+      top: -110px;
+      right: -80px;
+      width: 160px;
+      height: 160px;
+    }
+
+    #glass-circle2 {
+      bottom: -44px;
+      left: -61px;
+      width: 80px;
+      height: 80px;
+    }
+
+    #custom-image {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      width: 100px;
+      height: 100px;
+    }
+  </style>
+</head>
+<body>
+
+<div id="stopwatch-container">
+  <h1>Stopwatch ⏱️</h1>
+  <div id="timer">00:00:00</div>
+  <div id="lap-times"></div>
+  <div id="controls">
+    <button onclick="startStopwatch()">Start</button>
+    <button onclick="pauseStopwatch()">Pause</button>
+    <button onclick="lapStopwatch()">Lap</button>
+    <button onclick="resetStopwatch()">Reset</button>
+  </div>
+  <div id="glass-circle1"></div>
+  <div id="glass-circle2"></div>
+</div>
+
+<script>
+  let timerInterval;
+  let totalSeconds = 0;
+  let lapTimes = [];
+  let isRunning = false;
+
+  function updateTimer() {
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+
+    document.getElementById('timer').innerText = `${formatTime(hours)}:${formatTime(minutes)}:${formatTime(seconds)}`;
+  }
+
+  function updateLapTimes() {
+    const lapTimesContainer = document.getElementById('lap-times');
+    lapTimesContainer.innerHTML = '';
+
+    lapTimes.forEach((lap, index) => {
+      const lapTime = document.createElement('div');
+      lapTime.textContent = `Lap ${index + 1}: ${lap}`;
+      lapTimesContainer.appendChild(lapTime);
+    });
+  }
+
+  function formatTime(time) {
+    return time < 10 ? `0${time}` : time;
+  }
+
+  function startStopwatch() {
+    if (!isRunning) {
+      timerInterval = setInterval(function() {
+        totalSeconds++;
+        updateTimer();
+      }, 1000);
+      isRunning = true;
+    }
+  }
+
+  function pauseStopwatch() {
+    clearInterval(timerInterval);
+    isRunning = false;
+  }
+
+  function lapStopwatch() {
+    if (isRunning) {
+      const lapTime = document.getElementById('timer').innerText;
+      lapTimes.unshift(lapTime);
+      updateLapTimes();
+    }
+  }
+
+  function resetStopwatch() {
+    totalSeconds = 0;
+    lapTimes = [];
+    updateTimer();
+    updateLapTimes();
+    pauseStopwatch();
+  }
+</script>
+
+</body>
+</html>
